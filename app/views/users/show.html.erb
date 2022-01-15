@@ -1,6 +1,6 @@
-<h1>Events</h1>
+<h1>Events Created by <%= @user.email %></h1>
 <div>
-  <% @events.each do |event| %>
+  <% @user.created_events.each do |event| %>
     <div>
       <strong>Title:</strong> <%= event.title %>
       <br>
