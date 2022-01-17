@@ -5,8 +5,6 @@ class EventsController < ApplicationController
   end
   def create
     @event = current_user.created_events.build(event_params)
-    #@post = Post.new(post_params)
-    #@post.user_id = current_user.id
     if @event.save
       redirect_to new_event_path
     else
