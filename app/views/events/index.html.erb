@@ -1,6 +1,26 @@
 <h1>Events</h1>
 <div>
-  <% @events.each do |event| %>
+  <h2>Past</h2>
+  <% @events.past.each do |event| %>
+    <div>
+      <strong>Title:</strong> <%= event.title %>
+      <br>
+      <strong>Event-Date</strong> <%= event.event_date %>
+      <br>
+      <strong>Creator's Email:</strong> <%= event.creator.email %>
+      <br>
+      <h2>Attendees:</h2>
+      <ul>
+        <% event.attendees.each do |user| %>
+          <li>Id:<%= user.id %> Email:<%= user.email %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+</div>
+<div>
+  <h2>Upcomming</h2>
+  <% @events.upcomming.each do |event| %>
     <div>
       <strong>Title:</strong> <%= event.title %>
       <br>
