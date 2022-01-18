@@ -28,9 +28,20 @@
   <% end %>
     <br>
     <h2>Attended Events:</h2>
+    <strong>Past</strong>
     <ul>
       <% @user.attended_events.each do |event| %>
-        <li>Title: <%= event.title %> Event-date: <%= event.event_date %></li>
+        <% if event.event_date < Date.today %>
+          <li>Title: <%= event.title %> Event-date: <%= event.event_date %></li>
+        <% end %>
+      <% end %>
+    </ul>
+    <strong>Future</strong>
+    <ul>
+      <% @user.attended_events.each do |event| %>
+        <% if event.event_date >= Date.today %>
+          <li>Title: <%= event.title %> Event-date: <%= event.event_date %></li>
+        <% end %>
       <% end %>
     </ul>
 </div>
