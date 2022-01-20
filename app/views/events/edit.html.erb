@@ -1,0 +1,9 @@
+<h1>Event Edit</h1>
+
+<%= form_with model: @event do |form| %>
+  <%= form.label :title, "Title of the Event" %> <br>
+  <%= form.text_field :title, placeholder: "Title" %> <br><br>
+  <%= form.label :event_date, "Date of the Event" %> <br>
+  <%= form.date_field :event_date %> <br><br>
+  <%= form.submit %> <br>
+<% end %>

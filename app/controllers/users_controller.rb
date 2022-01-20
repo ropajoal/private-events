@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
-  def show
-    @user = User.find(params[:id]) 
+  before_action :authenticate_user! , only: [:new, :create]
+  def my_events
+    @user = current_user 
   end
 end
