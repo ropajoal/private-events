@@ -1,49 +1,52 @@
 <h1>Events</h1>
-<div>
+<section>
   <h2>Past</h2>
   <% @events.past.each do |event| %>
-    <div>
+    <article>
       <strong>Title:</strong> <%= event.title %>
       <br>
       <strong>Event-Date</strong> <%= event.event_date %>
       <br>
       <strong>Creator's Email:</strong> <%= event.creator.email %>
       <br>
-      <h2>Attendees:</h2>
+      <strong>Attendees:</strong>
       <ul>
         <% event.attendees.each do |user| %>
           <li>Id:<%= user.id %> Email:<%= user.email %></li>
         <% end %>
       </ul>
-    </div>
+    </article>
   <% end %>
-</div>
-<div>
+</section>
+<section>
   <h2>Upcomming</h2>
   <% @events.upcomming.each do |event| %>
-    <div>
+    <article>
       <strong>Title:</strong> <%= event.title %>
       <br>
       <strong>Event-Date</strong> <%= event.event_date %>
       <br>
       <strong>Creator's Email:</strong> <%= event.creator.email %>
-      <% if user_signed_in? %>
-        <% if event.attendees.to_a.none? { |user| user.id == current_user.id } %>
-          <%= form_with url: "/attendee_event", method: :post do |form| %>
-            <%= form.hidden_field :event_id, value: event.id %>
-            <%= form.submit "Attend this Event" %>
-          <% end %>
-        <% else %>
-          <em>You will attend this event!!</em>
-        <% end %>
-      <% end %>
       <br>
-      <h2>Attendees:</h2>
+      <strong>Attendees:</strong>
       <ul>
         <% event.attendees.each do |user| %>
           <li>Id:<%= user.id %> Email:<%= user.email %></li>
         <% end %>
       </ul>
-    </div>
+      <br>
+      <% if user_signed_in? %>
+        <% if event.creator == current_user || event.guests.any? { | guest | guest == current_user } %>
+          <% if event.attendees.to_a.none? { |user| user.id == current_user.id } %>
+            <em>You were invited to this event!!</em>
+            <%= button_to "Attend this Event", attendee_event_path({id: event.id}), method: :post %>
+          <% else %>
+            <em>You will attend this event!!</em>
+            <%= button_to "Unattend this Event", attendee_event_path({id: event.id}), method: :delete %>
+          <% end %>
+        <%= link_to "Show", event_path(event) %>
+        <% end %>
+      <% end %>
+    </article>
   <% end %>
-</div>
+</section>

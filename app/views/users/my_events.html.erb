@@ -1,34 +1,42 @@
 <h1>Events Created by <%= @user.email %></h1>
-<div>
+<section>
   <% @user.created_events.each do |event| %>
-    <div>
+    <article>
       <strong>Title:</strong> <%= event.title %>
       <br>
       <strong>Event-Date</strong> <%= event.event_date %>
       <br>
       <strong>Creator's Email:</strong> <%= event.creator.email %>
-    </div>
-    <% if event.attendees.to_a.none? { |user| user.id == current_user.id } %>
-      <%= form_with url: "/attendee_event", method: :post do |form| %>
-        <%= form.hidden_field :event_id, value: event.id %>
-        <%= form.submit "Attend this Event" %>
+      <% if user_signed_in? %>
+        <% if event.creator == current_user || event.guests.any? { | guest | guest == current_user } %>
+          <% if event.attendees.to_a.none? { |user| user.id == current_user.id } %>
+            <%= button_to "Attend this Event", attendee_event_path({id: event.id}), method: :post %>
+          <% else %>
+            <em>You will attend this event!!</em>
+            <%= button_to "Unattend this Event", attendee_event_path({id: event.id}), method: :delete %>
+          <% end %>
+        <% end %>
+          <br>
+        <%= link_to "Show", event_path(event) %>
+        <% if event.creator == current_user %>
+          <%= link_to "Edit", edit_event_path(event) %>
+          <%= link_to "Delete", event_path(event), method: :delete %>
+        <% end %>
       <% end %>
-    <% else %>
-      <em>You will attend this event!!</em>
-    <% end %>
-    <br>
-    <%= link_to "Edit", edit_event_path(event) %>
-    <%= link_to "Delete", event_path(event), method: :delete %>
-    <br>
-    <strong>Attendees:</strong>
-    <ul>
-      <% event.attendees.each do |user| %>
-        <li>Id:<%= user.id %> Email:<%= user.email %></li>
-      <% end %>
-    </ul>
+      <br>
+      <strong>Attendees:</strong>
+      <ul>
+        <% event.attendees.each do |user| %>
+          <li>Id:<%= user.id %> Email:<%= user.email %></li>
+        <% end %>
+      </ul>
+    </article>
   <% end %>
-    <br>
-    <h2>Attended Events:</h2>
+</section>
+<section>
+  <br>
+  <h2>Attended Events:</h2>
+  <article>
     <strong>Past</strong>
     <ul>
       <% @user.attended_events.each do |event| %>
@@ -37,6 +45,8 @@
         <% end %>
       <% end %>
     </ul>
+  </article>
+  <article>
     <strong>Future</strong>
     <ul>
       <% @user.attended_events.each do |event| %>
@@ -45,4 +55,5 @@
         <% end %>
       <% end %>
     </ul>
-</div>
+  </article>
+</section>

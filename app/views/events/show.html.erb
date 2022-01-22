@@ -3,20 +3,37 @@
 <strong>Event-Date:</strong> <%= @event.event_date %>
 <br>
 <strong>Creator's Email:</strong> <%= @event.creator.email %>
-<% if user_signed_in? %>
-  <% if @event.attendees.to_a.none? { |user| user.id == current_user.id } %>
-    <%= form_with url: "/attendee_event", method: :post do |form| %>
-      <%= form.hidden_field :event_id, value: @event.id %>
-      <%= form.submit "Attend this Event" %>
-    <% end %>
-  <% else %>
-    <em>You will attend this event!!</em>
+<br>
+<strong>Attendees:</strong>
+<ul>
+  <% @event.attendees.each do |user| %>
+    <li>Id:<%= user.id %> Email:<%= user.email %></li>
   <% end %>
-    <br>
-    <h2>Attendees:</h2>
-    <ul>
-      <% @event.attendees.each do |user| %>
-        <li>Id:<%= user.id %> Email:<%= user.email %></li>
+</ul>
+<strong>Guests</strong>
+<ul>
+  <% @event.guests.each do |user| %>
+    <li>Id:<%= user.id %> Email:<%= user.email %></li>
+  <% end %>
+</ul>
+<% if user_signed_in? %>
+  <% if @event.creator == current_user || @event.guests.any? { | guest | guest == current_user } %>
+    <% if @event.attendees.to_a.none? { |user| user.id == current_user.id } %>
+      <%= button_to "Attend this Event", attendee_event_path({id: @event.id}), method: :post %>
+    <% else %>
+      <em>You will attend this event!!</em>
+      <%= button_to "Unattend this Event", attendee_event_path({id: @event.id}), method: :delete %>
+    <% end %>
+  <% end %>
+  <% if current_user.created_events.any? { |event| event.id == @event.id } %>
+    <section>
+      <h2>Invite a user to this event</h2>
+      <%= form_with url: invitations_path do |form| %>
+        <%= form.hidden_field :event_id, value: @event.id %>
+        <%= form.label :email, "Insert the email of the user to invite" %> <br>
+        <%= form.email_field :email, placeholder: "Email" %> <br><br>
+        <%= form.submit "Invite User" %> <br>
       <% end %>
-    </ul>
+    </section>
+  <% end %>
 <% end %>
